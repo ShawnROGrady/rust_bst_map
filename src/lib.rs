@@ -179,14 +179,14 @@ impl<K: Display + Ord + Copy, V: Copy> Debug for Node<K, V> {
     }
 }
 
-pub struct Tree<K: Ord + Copy, V: Copy> {
+pub struct TreeMap<K: Ord + Copy, V: Copy> {
     root: NodeLink<K, V>,
     num_elems: usize,
 }
 
-impl<K: Ord + Copy, V: Copy> Tree<K, V> {
+impl<K: Ord + Copy, V: Copy> TreeMap<K, V> {
     pub fn new() -> Self {
-        return Tree {
+        return TreeMap {
             root: None,
             num_elems: 0,
         };
@@ -270,10 +270,10 @@ impl<K: Ord + Copy, V: Copy> Tree<K, V> {
 
 #[cfg(test)]
 mod test {
-    use super::Tree;
+    use super::TreeMap;
     #[test]
     fn test_num_elems() {
-        let mut tree = Tree::new();
+        let mut tree = TreeMap::new();
 
         // verify no initial elements
         assert_eq!(tree.num_elems(), 0);
@@ -290,7 +290,7 @@ mod test {
 
     #[test]
     fn test_get() {
-        let mut tree = Tree::new();
+        let mut tree = TreeMap::new();
         // add some values
         tree.insert("c", 2);
         tree.insert("e", 4);
@@ -309,7 +309,7 @@ mod test {
 
     #[test]
     fn test_get_contents() {
-        let mut tree = Tree::new();
+        let mut tree = TreeMap::new();
 
         // add some values
         tree.insert("c", 2);
@@ -329,7 +329,7 @@ mod test {
 
     #[test]
     fn test_insert() {
-        let mut tree = Tree::new();
+        let mut tree = TreeMap::new();
         // add some values
         tree.insert("c", 2);
         tree.insert("e", 4);
@@ -355,7 +355,7 @@ mod test {
 
     #[test]
     fn test_delete_node_no_children() {
-        let mut tree = Tree::new();
+        let mut tree = TreeMap::new();
 
         // add some values
         tree.insert("c", 2);
@@ -396,7 +396,7 @@ mod test {
 
     #[test]
     fn test_delete_node_1_child() {
-        let mut tree = Tree::new();
+        let mut tree = TreeMap::new();
 
         // add some values
         tree.insert("d", 3);
@@ -436,7 +436,7 @@ mod test {
 
     #[test]
     fn test_delete_node_2_child() {
-        let mut tree = Tree::new();
+        let mut tree = TreeMap::new();
 
         // add some values
         tree.insert("c", 2);
@@ -463,7 +463,7 @@ mod test {
     #[test]
     fn test_delete_node_2_child_2() {
         // example from textbook
-        let mut tree = Tree::new();
+        let mut tree = TreeMap::new();
         let init_contents = vec![
             ("p", 15),
             ("g", 6),
@@ -516,7 +516,7 @@ mod test {
 
     #[test]
     fn test_delete_all() {
-        let mut tree = Tree::new();
+        let mut tree = TreeMap::new();
         let init_contents = vec![("c", 2), ("d", 3), ("b", 1), ("e", 4), ("f", 5), ("g", 6)];
         for x in init_contents.iter() {
             tree.insert(x.0, x.1)
