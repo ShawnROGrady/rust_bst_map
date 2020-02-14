@@ -139,6 +139,24 @@ impl<K: Ord + Copy, V: Copy> Node<K, V> {
         }
         return (self.key, self.value);
     }
+
+    fn find_val(&self, key: K) -> Option<V> {
+        match self.key.cmp(&key) {
+            Equal => return Some(self.value),
+            Greater => match self.left.as_ref() {
+                None => return None,
+                Some(left_node) => {
+                    return left_node.find_val(key);
+                }
+            },
+            Less => match self.right.as_ref() {
+                None => return None,
+                Some(right_node) => {
+                    return right_node.find_val(key);
+                }
+            },
+        }
+    }
 }
 
 impl<K: Display + Ord + Copy, V: Copy> Debug for Node<K, V> {
@@ -190,6 +208,13 @@ impl<K: Ord + Copy, V: Copy> Tree<K, V> {
             }
         }
         self.num_elems += 1;
+    }
+
+    pub fn get(&self, key: K) -> Option<V> {
+        match self.root.as_ref() {
+            None => return None,
+            Some(node) => return node.find_val(key),
+        }
     }
 
     pub fn num_elems(&self) -> usize {
@@ -261,6 +286,25 @@ mod test {
         tree.insert("f", 5);
 
         assert_eq!(tree.num_elems(), 5);
+    }
+
+    #[test]
+    fn test_get() {
+        let mut tree = Tree::new();
+        // add some values
+        tree.insert("c", 2);
+        tree.insert("e", 4);
+        tree.insert("d", 3);
+        tree.insert("b", 1);
+        tree.insert("f", 5);
+
+        // valid key
+        let v0 = tree.get("d");
+        assert_eq!(3, v0.unwrap());
+
+        // non-present key
+        let v1 = tree.get("s");
+        assert_eq!(None, v1);
     }
 
     #[test]
