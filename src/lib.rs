@@ -59,24 +59,24 @@ struct Node<K: Ord + Copy, V: Copy> {
 
 impl<K: Ord + Copy, V: Copy> Node<K, V> {
     fn insert(&mut self, new_node: Box<Node<K, V>>) {
-        if new_node.key.cmp(&self.key) == Less {
-            match self.left.as_mut() {
+        match self.key.cmp(&new_node.key) {
+            Equal => self.value = new_node.value,
+            Greater => match self.left.as_mut() {
                 None => {
                     self.left = Some(new_node);
                 }
                 Some(left_node) => {
                     left_node.insert(new_node);
                 }
-            }
-        } else {
-            match self.right.as_mut() {
+            },
+            Less => match self.right.as_mut() {
                 None => {
                     self.right = Some(new_node);
                 }
                 Some(right_node) => {
                     right_node.insert(new_node);
                 }
-            }
+            },
         }
     }
 
@@ -325,6 +325,32 @@ mod test {
         let v2 = tree.get_preorder_contents();
         let expected_preorder_contents = vec![("c", 2), ("b", 1), ("e", 4), ("d", 3), ("f", 5)];
         assert_eq!(expected_preorder_contents, v2);
+    }
+
+    #[test]
+    fn test_insert() {
+        let mut tree = Tree::new();
+        // add some values
+        tree.insert("c", 2);
+        tree.insert("e", 4);
+        tree.insert("d", 3);
+        tree.insert("b", 1);
+        tree.insert("f", 5);
+        // verify initial contents
+        let v0 = tree.get_contents();
+        let expected_contents = vec![("b", 1), ("c", 2), ("d", 3), ("e", 4), ("f", 5)];
+        assert_eq!(expected_contents, v0);
+
+        // add duplicate k,v + verify nothing changed
+        tree.insert("b", 1);
+        let v1 = tree.get_contents();
+        assert_eq!(expected_contents, v1);
+
+        // add duplicate k w/ new v + verify update
+        tree.insert("d", 100);
+        let v1 = tree.get_contents();
+        let expected_contents1 = vec![("b", 1), ("c", 2), ("d", 100), ("e", 4), ("f", 5)];
+        assert_eq!(expected_contents1, v1);
     }
 
     #[test]
