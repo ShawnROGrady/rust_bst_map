@@ -291,16 +291,15 @@ mod test {
     #[test]
     fn test_get() {
         let mut tree = TreeMap::new();
-        // add some values
-        tree.insert("c", 2);
-        tree.insert("e", 4);
-        tree.insert("d", 3);
-        tree.insert("b", 1);
-        tree.insert("f", 5);
-
-        // valid key
-        let v0 = tree.get("d");
-        assert_eq!(3, v0.unwrap());
+        let contents = [("c", 2), ("e", 4), ("d", 3), ("b", 1), ("f", 5), ("a", 0)];
+        for x in contents.iter() {
+            tree.insert(x.0, x.1);
+        }
+        // valid keys
+        for x in contents.iter() {
+            let val = tree.get(x.0);
+            assert_eq!(x.1, val.unwrap(), "unexpected value for key {}", x.0);
+        }
 
         // non-present key
         let v1 = tree.get("s");
@@ -317,13 +316,15 @@ mod test {
         tree.insert("d", 3);
         tree.insert("b", 1);
         tree.insert("f", 5);
+        tree.insert("a", 0);
 
         let v1 = tree.get_contents();
-        let expected_contents = vec![("b", 1), ("c", 2), ("d", 3), ("e", 4), ("f", 5)];
+        let expected_contents = vec![("a", 0), ("b", 1), ("c", 2), ("d", 3), ("e", 4), ("f", 5)];
         assert_eq!(expected_contents, v1);
 
         let v2 = tree.get_preorder_contents();
-        let expected_preorder_contents = vec![("c", 2), ("b", 1), ("e", 4), ("d", 3), ("f", 5)];
+        let expected_preorder_contents =
+            vec![("c", 2), ("b", 1), ("a", 0), ("e", 4), ("d", 3), ("f", 5)];
         assert_eq!(expected_preorder_contents, v2);
     }
 
@@ -336,9 +337,10 @@ mod test {
         tree.insert("d", 3);
         tree.insert("b", 1);
         tree.insert("f", 5);
+        tree.insert("a", 0);
         // verify initial contents
         let v0 = tree.get_contents();
-        let expected_contents = vec![("b", 1), ("c", 2), ("d", 3), ("e", 4), ("f", 5)];
+        let expected_contents = vec![("a", 0), ("b", 1), ("c", 2), ("d", 3), ("e", 4), ("f", 5)];
         assert_eq!(expected_contents, v0);
 
         // add duplicate k,v + verify nothing changed
@@ -349,7 +351,7 @@ mod test {
         // add duplicate k w/ new v + verify update
         tree.insert("d", 100);
         let v1 = tree.get_contents();
-        let expected_contents1 = vec![("b", 1), ("c", 2), ("d", 100), ("e", 4), ("f", 5)];
+        let expected_contents1 = vec![("a", 0), ("b", 1), ("c", 2), ("d", 100), ("e", 4), ("f", 5)];
         assert_eq!(expected_contents1, v1);
     }
 
@@ -529,6 +531,7 @@ mod test {
         }
 
         assert_eq!(0, tree.get_contents().len());
+        assert_eq!(0, tree.get_preorder_contents().len());
         assert_eq!(0, tree.num_elems());
     }
 }
